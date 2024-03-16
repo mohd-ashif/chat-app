@@ -4,11 +4,11 @@ import cors from "cors" ;
 import dotenv, { config } from "dotenv";
 import helemt from "helmet";
 import morgan from "morgan";
-
-dotenv.config()
+import { Configuration , OpenAIApi} from "openai"
+import openAiRoutes from "./routes/openai.js"
 
 // CONFIGURATIONS
-
+dotenv.config()
 const app = express()
 app.use(express.json())
 app.use(helemt())
@@ -18,11 +18,21 @@ app.use(bodyParser.json({limit: "30mb ", extended: true}))
 app.use(bodyParser.urlencoded({limit: "30mb" , extended: true}))
 app.use(cors())
 
+//OPEN AI CONFIG
+const configuration = new Configuration({
+    apiKey: process.env.OPEN_API_KEY
+})
+
+export const openai = new OpenAIApi(configuration)
+
 // SERVER SETUP
 
 app.get('/', (req, res)=> {
     res.send("server is running ...")
 })
+
+//ROUTES
+app.use('/openai', openAiRoutes) 
 
 const port = process.env.PORT || 5000 ;
 
